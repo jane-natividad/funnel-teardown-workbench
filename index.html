@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Funnel, Torn Down — Funnel Teardown Workbench | Jane Natividad</title>
+<meta name="description" content="A structured workbench for tearing down a live digital-health funnel from the outside: every finding tagged by stage, severity, and how you actually know it — observed, sourced, or inferred.">
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --accent: #0071e3; --accent-soft: #e8f2ff; --accent-border: #cce2ff;
+    --ink: #1d1d1f; --ink-soft: #48484a; --muted: #6e6e73;
+    --hairline: #e5e5e7; --panel: #f5f5f7; --bg: #ffffff;
+    --good: #1a7f4e; --good-soft: #e7f6ee;
+    --warn: #9a6b00; --warn-soft: #fff6e0;
+    --bad: #b3261e; --bad-soft: #fdecea;
+  }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; }
+  .wrap { max-width: 800px; margin: 0 auto; padding: 56px 24px 80px; }
+  .back-link { display: inline-block; font-size: 12px; color: var(--muted); text-decoration: none; margin-bottom: 22px; }
+  .back-link:hover { color: var(--accent); }
+  .eyebrow { font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 14px; }
+  h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 14px; line-height: 1.18; text-wrap: balance; }
+  h2 { font-size: 17px; font-weight: 650; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .byline { font-size: 12.8px; color: var(--muted); margin: 0 0 28px; }
+  .byline a { color: var(--muted); }
+  p { font-size: 14.5px; line-height: 1.62; color: var(--ink-soft); margin: 0 0 16px; }
+  .lede { font-size: 15.5px; line-height: 1.6; color: var(--ink); background: var(--panel); border-radius: 14px; padding: 20px 24px; margin: 0 0 28px; }
+  .section-label { font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 36px 0 14px; }
+  .section-sub { font-size: 13px; color: var(--ink-soft); margin: -6px 0 14px; line-height: 1.55; }
+  .panel { background: var(--panel); border-radius: 14px; padding: 20px 22px; margin: 0 0 18px; }
+  .card { border: 1px solid var(--hairline); border-radius: 12px; padding: 14px 16px; background: #fff; }
+  .card.top { border-color: var(--accent-border); background: var(--accent-soft); }
+  .stack { display: flex; flex-direction: column; gap: 10px; }
+  .pipeline { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+  .pipe-step { flex: 1 1 auto; min-width: 130px; background: var(--panel); border: 1px solid var(--hairline); border-radius: 10px; padding: 10px 12px; font-size: 11.3px; color: var(--ink-soft); line-height: 1.4; }
+  .pipe-step b { display: block; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-bottom: 3px; }
+  .pipeline-note { font-size: 11.5px; color: var(--muted); margin: 0 0 24px; }
+  .btn { font-size: 12px; font-weight: 600; color: var(--accent); background: #fff; border: 1px solid var(--accent-border); border-radius: 8px; padding: 7px 13px; cursor: pointer; font-family: inherit; }
+  .btn:hover { background: var(--accent-soft); }
+  .btn.primary { color: #fff; background: var(--accent); border-color: var(--accent); }
+  .btn.primary:hover { background: #005bbf; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: 11.8px; color: var(--accent); background: #fff; border: 1px solid var(--accent-border); border-radius: 999px; padding: 6px 13px; cursor: pointer; font-family: inherit; text-align: left; }
+  .chip:hover { background: var(--accent-soft); }
+  .chip.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tag { display: inline-block; font-size: 10.3px; font-weight: 700; letter-spacing: 0.04em; border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+  .tag.good { color: var(--good); background: var(--good-soft); }
+  .tag.warn { color: var(--warn); background: var(--warn-soft); }
+  .tag.bad { color: var(--bad); background: var(--bad-soft); }
+  .tag.info { color: var(--accent); background: var(--accent-soft); }
+  .tag.mute { color: var(--muted); background: var(--panel); }
+  .bar-track { height: 7px; background: var(--hairline); border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.25s ease; }
+  input[type=text], input[type=password], select, textarea { font-family: inherit; font-size: 13px; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--hairline); background: #fff; color: var(--ink); }
+  textarea { width: 100%; resize: vertical; line-height: 1.5; }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .gov-grid { display: flex; flex-direction: column; gap: 10px; margin: 0 0 32px; }
+  .gov-item { display: flex; gap: 12px; border: 1px solid var(--hairline); border-radius: 12px; padding: 13px 16px; }
+  .gov-icon { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700; }
+  .gov-text b { display: block; font-size: 12.8px; color: var(--ink); margin-bottom: 2px; }
+  .gov-text span { font-size: 12.2px; color: var(--ink-soft); line-height: 1.55; }
+  .not-list { font-size: 12.5px; color: var(--ink-soft); line-height: 1.7; margin: 0 0 32px; padding-left: 20px; }
+  .not-list li { margin-bottom: 6px; }
+  .why { font-size: 13.3px; font-style: italic; color: var(--ink); background: var(--panel); border-radius: 14px; padding: 18px 22px; margin: 0 0 32px; line-height: 1.58; }
+  .disclosure { font-size: 11.5px; line-height: 1.55; color: var(--muted); background: var(--panel); border-radius: 10px; padding: 12px 16px; margin: 0 0 32px; }
+  pre.out { white-space: pre-wrap; word-break: break-word; background: var(--panel); border-radius: 10px; padding: 14px 16px; font-size: 12px; line-height: 1.6; color: var(--ink-soft); font-family: ui-monospace, "SF Mono", Menlo, monospace; margin: 0; }
+  table.grid { width: 100%; border-collapse: collapse; font-size: 12.3px; }
+  table.grid th { text-align: left; font-size: 10.3px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 8px 8px; border-bottom: 1px solid var(--hairline); }
+  table.grid td { padding: 9px 8px; border-bottom: 1px solid var(--hairline); color: var(--ink-soft); vertical-align: top; }
+  .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  footer { border-top: 1px solid var(--hairline); padding-top: 20px; font-size: 12px; color: var(--muted); }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  @media (max-width: 480px) { .wrap { padding: 40px 16px 60px; } h1 { font-size: 24px; } }
+
+  .stage-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+  .stage { border: 1px solid var(--hairline); border-radius: 10px; padding: 10px 11px; background: #fff; cursor: pointer; text-align: left; font-family: inherit; }
+  .stage:hover { border-color: var(--accent-border); }
+  .stage.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .stage .n { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .stage .t { font-size: 12.3px; font-weight: 600; color: var(--ink); margin: 2px 0 6px; line-height: 1.3; }
+  .heat { display: flex; gap: 3px; }
+  .heat span { height: 6px; flex: 1; border-radius: 3px; background: var(--hairline); }
+  .heat span.h { background: var(--bad); } .heat span.m { background: var(--warn); } .heat span.l { background: #8fb8ef; }
+  .finding-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 6px; }
+  .finding-title { font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.4; }
+  .finding-body { font-size: 12.6px; color: var(--ink-soft); line-height: 1.55; margin: 0 0 6px; }
+  .finding-src { font-size: 11.3px; color: var(--muted); }
+  .finding-fix { font-size: 12.3px; color: var(--ink); margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--hairline); }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .form-grid label { font-size: 11px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 4px; letter-spacing: 0.03em; }
+  .form-grid select, .form-grid input, .form-grid textarea { width: 100%; }
+  .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 0 0 12px; font-size: 12.3px; color: var(--ink-soft); }
+  .scope { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .scope h3 { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+  .scope ul { margin: 0; padding-left: 18px; font-size: 12.3px; color: var(--ink-soft); line-height: 1.6; }
+  .prio { font-size: 13px; line-height: 1.55; color: var(--ink); }
+  .prio li { margin-bottom: 8px; }
+  @media (max-width: 560px) { .form-grid, .scope { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="https://jane-natividad.github.io">&larr; Back to portfolio</a>
+  <div class="eyebrow">Product Analysis · Working Prototype</div>
+  <h1>Funnel, torn down: an outside-in teardown where every finding says how you know it</h1>
+  <p class="byline">Jane Natividad &nbsp;&middot;&nbsp; <a href="https://jane-natividad.github.io">jane-natividad.github.io</a> &nbsp;&middot;&nbsp; <a href="https://github.com/jane-natividad/funnel-teardown-workbench">View on GitHub</a></p>
+
+  <div class="lede">Most funnel teardowns blur three very different things: what you saw yourself, what a customer review or listing says, and what you're guessing. This workbench forces the distinction. Every finding is tagged by stage, severity, and evidence type, so the prioritized summary at the end can say &mdash; honestly &mdash; which problems are confirmed and which are hypotheses to validate on day one. Two fictional products show the two funnel shapes that matter most in digital health: direct-to-consumer and clinician-gated.</div>
+
+  <div class="section-label">1 · Pick a funnel</div>
+  <div class="chips" id="examples"></div>
+  <p class="section-sub" id="example-note" style="margin-top:12px"></p>
+
+  <div class="section-label">2 · Scope &mdash; what was and wasn't looked at</div>
+  <div class="card"><div class="scope"><div><h3>Looked at</h3><ul id="scope-in"></ul></div><div><h3>Deliberately did not do</h3><ul id="scope-out"></ul></div></div></div>
+
+  <div class="section-label">3 · The funnel, stage by stage</div>
+  <p class="section-sub">Bars show findings per stage by severity. Click a stage to filter; click again to show all.</p>
+  <div class="stage-strip" id="stages"></div>
+
+  <div class="section-label">4 · Findings</div>
+  <div class="toolbar">
+    <label><input type="checkbox" id="hide-inferred"> Hide inferred findings</label>
+    <span id="count"></span>
+  </div>
+  <div class="stack" id="findings"></div>
+
+  <div class="section-label">5 · Log a finding</div>
+  <div class="panel">
+    <div class="form-grid">
+      <div><label for="f-stage">Stage</label><select id="f-stage"></select></div>
+      <div><label for="f-sev">Severity</label><select id="f-sev"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+      <div class="full"><label for="f-title">Finding (one line)</label><input type="text" id="f-title" placeholder="e.g. Renewal price isn't stated anywhere before checkout"></div>
+      <div class="full"><label for="f-body">What you saw</label><textarea id="f-body" rows="2"></textarea></div>
+      <div><label for="f-ev">How do you know?</label><select id="f-ev"><option value="observed">Directly observed</option><option value="sourced">Sourced (review, listing, press)</option><option value="inferred">Inferred &mdash; a hypothesis</option></select></div>
+      <div><label for="f-src">Source</label><input type="text" id="f-src" placeholder="page, review, date"></div>
+      <div class="full"><label for="f-fix">Smallest fix worth testing</label><input type="text" id="f-fix"></div>
+      <div class="full"><button class="btn primary" id="f-add" type="button">Add finding</button> <span id="f-msg" style="font-size:12px;color:var(--bad);margin-left:8px"></span></div>
+    </div>
+  </div>
+
+  <div class="section-label">6 · Prioritized summary</div>
+  <p class="section-sub">Ranked by severity &times; confidence: an observed High beats an inferred High. Inferred items are carried into a "validate first" list rather than presented as fact.</p>
+  <div class="card"><ol class="prio" id="prio"></ol><div id="validate"></div></div>
+  <div style="margin:14px 0 6px;display:flex;gap:8px;align-items:center"><button class="btn" id="copy" type="button">Copy teardown as Markdown</button><span id="copy-msg" style="font-size:12px;color:var(--good)"></span></div>
+  <details><summary style="font-size:12px;color:var(--accent);cursor:pointer;font-weight:600">Preview Markdown</summary><pre class="out" id="md" style="margin-top:8px"></pre></details>
+
+  <div class="section-label">What this method learned the hard way</div>
+  <div class="gov-grid">
+    <div class="gov-item"><div class="gov-icon">1</div><div class="gov-text"><b>Check the claim against the live source</b><span>A trust badge on the homepage and the live review score it links to can disagree. Usually it's a stale widget, not deception &mdash; but it's checkable, so check it.</span></div></div>
+    <div class="gov-item"><div class="gov-icon">2</div><div class="gov-text"><b>Find out who actually converts</b><span>In a clinician-gated product the patient can't sign up at all. The conversion that drives growth is a clinician finishing training and staying active &mdash; a completely different funnel to optimize.</span></div></div>
+    <div class="gov-item"><div class="gov-icon">3</div><div class="gov-text"><b>Read the renewal, not just the first order</b><span>First-order offers are explicit; what happens on month two often isn't. That's where reviews get angry.</span></div></div>
+    <div class="gov-item"><div class="gov-icon">4</div><div class="gov-text"><b>Stop before you become a real customer</b><span>Walk the flow up to name, email, and payment, and say so. The scope box is part of the output, not a footnote.</span></div></div>
+  </div>
+
+  <div class="why">"This isn't a critique of a team I can't see inside. It's how I approach a product cold: sourced where I can, labelled where I'm guessing, and honest about where the outside view runs out."</div>
+
+  <div class="disclosure">Prototype with fictional products. Both example funnels are invented composites built to demonstrate the method; any resemblance to a specific company is unintended. Findings, quotes, and sources are illustrative.</div>
+  <footer>Built by <a href="https://jane-natividad.github.io">Jane Natividad</a>. No frameworks, no build step &mdash; a single static page and plain JavaScript. Nothing you enter leaves this browser tab.</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var EV = { observed: { label: "Observed", cls: "good", conf: 1.0 }, sourced: { label: "Sourced", cls: "info", conf: 0.8 }, inferred: { label: "Inferred", cls: "mute", conf: 0.45 } };
+  var SEV = { High: { cls: "bad", w: 3 }, Medium: { cls: "warn", w: 2 }, Low: { cls: "mute", w: 1 } };
+
+  var EXAMPLES = [
+    {
+      id: "dtc", name: "Kestrel Health — direct-to-consumer subscription",
+      note: "A fictional online weight-management clinic: patient finds it, pays, gets a prescription and a monthly subscription. The patient is the customer.",
+      stages: ["Awareness / homepage", "Pricing", "Sign-up / intake quiz", "Checkout / first charge", "Renewal & pricing fairness", "App / ongoing engagement"],
+      scopeIn: ["Marketing site: homepage, pricing, how-it-works, FAQ", "Live intake quiz up to the first two questions", "App store listings and version history", "Public review site, filtered to 1- and 2-star reviews", "Two dated press releases"],
+      scopeOut: ["Created an account or entered a name/email", "Submitted the medical questionnaire or payment details", "Saw any internal analytics, support data, or roadmap"],
+      findings: [
+        { stage: 0, sev: "Low", ev: "observed", title: "Homepage trust badge shows a higher score than the live review profile", body: "Badge reads 4.5 stars; the live profile it links to showed 4.3 the same day.", src: "Homepage vs. review site, same-day check", fix: "Pull the badge from the live widget, or drop the number." },
+        { stage: 1, sev: "Medium", ev: "sourced", title: "First-visit consult fee is waived — renewal fee isn't mentioned", body: "Pricing page states the waiver for the first order only. A 4-star review says the advertised price 'clearly did not include the monthly consult fee'.", src: "Pricing page + dated 4-star review", fix: "State the all-in monthly price next to the headline price." },
+        { stage: 2, sev: "Low", ev: "observed", title: "Intake quiz is the same template as the sister brand's", body: "Identical first screens and wording; personalization only starts after category selection.", src: "Both live intake flows, first two screens", fix: "Not a flaw on its own — an opportunity to differentiate the first question." },
+        { stage: 3, sev: "High", ev: "sourced", title: "Customer says a stated 72-hour decision window wasn't honoured", body: "Charged within 24 hours while trying to cancel; no phone channel; email-only support during a billing dispute.", src: "Updated 1-star review + same-day company reply", fix: "Hold the first charge until the stated window closes; add a cancel button inside that window." },
+        { stage: 4, sev: "Medium", ev: "sourced", title: "Existing subscribers see new-customer pricing undercut theirs", body: "A subscriber asks why the same medication is now cheaper for new sign-ups.", src: "Dated 1-star review", fix: "Auto-apply price drops to existing subscribers, and say so." },
+        { stage: 5, sev: "Medium", ev: "inferred", title: "App release cadence suggests engagement isn't the priority yet", body: "Five versions in six months, mostly fixes; only one written review visible.", src: "App store version history — inference, not confirmed", fix: "Validate with retention data before investing here." }
+      ]
+    },
+    {
+      id: "b2b2c", name: "Brightpath — clinician-gated program (B2B2C)",
+      note: "A fictional nutrition-therapy app a patient cannot join on their own: a registered clinician has to grant access. The clinician is the real customer.",
+      stages: ["Awareness / homepage", "Audience split", "Clinician sign-up", "Clinician activation", "Patient access grant", "App / ongoing engagement"],
+      scopeIn: ["Marketing site and two localized country sites", "Find-a-provider map and directory", "Clinician registration page (viewed only)", "iOS and Android listings, ratings, update dates", "A dated content PDF hosted on the site"],
+      scopeOut: ["Registered as a clinician or started training", "Enrolled a test patient", "Saw the gated in-app patient experience"],
+      findings: [
+        { stage: 0, sev: "Low", ev: "observed", title: "Nine localized country sites — a real rollout playbook, not a pilot", body: "Each has its own provider directory; two were spot-checked.", src: "Country selector, checked entry by entry", fix: "None — but check every selector entry, not just the main domain." },
+        { stage: 1, sev: "High", ev: "observed", title: "Patients can't self-enrol: conversion is a clinician decision", body: "The provider map states that listed experts 'can grant you access to the app'.", src: "Find-a-provider page", fix: "Measure and optimize clinician activation, not patient sign-ups." },
+        { stage: 2, sev: "High", ev: "observed", title: "Clinician sign-up lands on a bare login screen", body: "The marketing page sells the program hard; the next click has no 'why', no time estimate, no preview of training.", src: "Clinician registration page", fix: "Rewrite one page: what you get, how long training takes, what patients see." },
+        { stage: 3, sev: "Medium", ev: "inferred", title: "Directory size may overstate active clinicians", body: "Listed providers are real and named, but there's no public signal of who is actively granting access.", src: "Directory — inference", fix: "Validate first: share of listed clinicians who granted access in the last 90 days." },
+        { stage: 5, sev: "Medium", ev: "observed", title: "Marketing content is shipping; the app isn't", body: "A recipe PDF is dated this year while the Android app's last update is over a year old.", src: "File path date vs. store 'last updated'", fix: "Align release cadence, or stop signalling freshness the product can't match." },
+        { stage: 5, sev: "Low", ev: "sourced", title: "Two very different receptions on iOS and Android", body: "Ratings and review tone diverge sharply by platform.", src: "Both store listings", fix: "Check for a platform-specific bug before reading it as sentiment." }
+      ]
+    }
+  ];
+
+  var cur = 0, stageFilter = null;
+  var data = EXAMPLES.map(function (e) { return JSON.parse(JSON.stringify(e)); });
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function prio(f) { return SEV[f.sev].w * EV[f.ev].conf; }
+
+  EXAMPLES.forEach(function (e, i) {
+    var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = e.name;
+    b.addEventListener("click", function () { cur = i; stageFilter = null; renderAll(); });
+    $("examples").appendChild(b);
+  });
+  $("hide-inferred").addEventListener("change", renderAll);
+
+  $("f-add").addEventListener("click", function () {
+    var t = $("f-title").value.trim();
+    if (!t) { $("f-msg").textContent = "Add a one-line finding first."; return; }
+    if ($("f-ev").value !== "inferred" && !$("f-src").value.trim()) { $("f-msg").textContent = "Observed or sourced findings need a source — or mark it inferred."; return; }
+    $("f-msg").textContent = "";
+    data[cur].findings.push({ stage: +$("f-stage").value, sev: $("f-sev").value, ev: $("f-ev").value, title: t, body: $("f-body").value.trim(), src: $("f-src").value.trim() || "—", fix: $("f-fix").value.trim(), user: true });
+    ["f-title", "f-body", "f-src", "f-fix"].forEach(function (id) { $(id).value = ""; });
+    renderAll();
+  });
+
+  function renderAll() {
+    var d = data[cur];
+    $("examples").querySelectorAll(".chip").forEach(function (b, i) { b.classList.toggle("on", i === cur); });
+    $("example-note").textContent = d.note;
+    $("scope-in").innerHTML = d.scopeIn.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("");
+    $("scope-out").innerHTML = d.scopeOut.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("");
+    $("f-stage").innerHTML = d.stages.map(function (s, i) { return '<option value="' + i + '">' + (i + 1) + ". " + esc(s) + "</option>"; }).join("");
+
+    var hide = $("hide-inferred").checked;
+    var visible = d.findings.filter(function (f) { return !(hide && f.ev === "inferred"); });
+
+    $("stages").innerHTML = "";
+    d.stages.forEach(function (s, i) {
+      var fs = visible.filter(function (f) { return f.stage === i; });
+      var bars = fs.slice().sort(function (a, b) { return SEV[b.sev].w - SEV[a.sev].w; }).map(function (f) { return '<span class="' + f.sev[0].toLowerCase() + '"></span>'; }).join("") || "<span></span>";
+      var btn = document.createElement("button"); btn.type = "button"; btn.className = "stage" + (stageFilter === i ? " on" : "");
+      btn.innerHTML = '<div class="n">Stage ' + (i + 1) + " · " + fs.length + '</div><div class="t">' + esc(s) + '</div><div class="heat">' + bars + "</div>";
+      btn.addEventListener("click", function () { stageFilter = stageFilter === i ? null : i; renderAll(); });
+      $("stages").appendChild(btn);
+    });
+
+    var list = visible.filter(function (f) { return stageFilter === null || f.stage === stageFilter; })
+      .sort(function (a, b) { return a.stage - b.stage || SEV[b.sev].w - SEV[a.sev].w; });
+    $("count").textContent = list.length + " finding" + (list.length === 1 ? "" : "s") + (stageFilter !== null ? " in stage " + (stageFilter + 1) : "");
+    $("findings").innerHTML = list.map(function (f) {
+      return '<div class="card"><div class="finding-head"><div><div class="finding-src" style="margin-bottom:3px">Stage ' + (f.stage + 1) + " · " + esc(d.stages[f.stage]) + (f.user ? " · added by you" : "") + '</div><div class="finding-title">' + esc(f.title) + '</div></div><div class="tags"><span class="tag ' + SEV[f.sev].cls + '">' + f.sev + '</span><span class="tag ' + EV[f.ev].cls + '">' + EV[f.ev].label + "</span></div></div>"
+        + (f.body ? '<div class="finding-body">' + esc(f.body) + "</div>" : "") + '<div class="finding-src">Source: ' + esc(f.src) + "</div>"
+        + (f.fix ? '<div class="finding-fix"><b>Smallest fix:</b> ' + esc(f.fix) + "</div>" : "") + "</div>";
+    }).join("") || '<div class="card" style="color:var(--muted);font-size:12.5px">No findings for this filter.</div>';
+
+    var confirmed = d.findings.filter(function (f) { return f.ev !== "inferred"; }).sort(function (a, b) { return prio(b) - prio(a); }).slice(0, 3);
+    var toValidate = d.findings.filter(function (f) { return f.ev === "inferred"; });
+    $("prio").innerHTML = confirmed.map(function (f) { return "<li><b>" + esc(f.title) + "</b> <span class='tag " + SEV[f.sev].cls + "'>" + f.sev + "</span><br><span style='color:var(--ink-soft);font-size:12.3px'>" + esc(f.fix || "") + "</span></li>"; }).join("");
+    $("validate").innerHTML = toValidate.length ? '<div style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:10px 0 6px">Validate first, before acting</div><ul class="prio" style="padding-left:18px">' + toValidate.map(function (f) { return "<li>" + esc(f.title) + "</li>"; }).join("") + "</ul>" : "";
+
+    var md = "# Funnel teardown — " + d.name + "\n\n" + d.note + "\n\n## Scope\n**Looked at:**\n" + d.scopeIn.map(function (s) { return "- " + s; }).join("\n") + "\n\n**Did not do:**\n" + d.scopeOut.map(function (s) { return "- " + s; }).join("\n") + "\n\n## Findings by stage\n";
+    d.stages.forEach(function (s, i) {
+      var fs = d.findings.filter(function (f) { return f.stage === i; });
+      if (!fs.length) return;
+      md += "\n### " + (i + 1) + ". " + s + "\n";
+      fs.forEach(function (f) { md += "- **" + f.title + "** (" + f.sev + ", " + EV[f.ev].label.toLowerCase() + ") — " + (f.body ? f.body + " " : "") + "_Source: " + f.src + "_" + (f.fix ? "\n  - Smallest fix: " + f.fix : "") + "\n"; });
+    });
+    md += "\n## Top priorities (confirmed)\n" + confirmed.map(function (f, i) { return (i + 1) + ". " + f.title; }).join("\n");
+    if (toValidate.length) md += "\n\n## Validate first\n" + toValidate.map(function (f) { return "- " + f.title; }).join("\n");
+    md += "\n\n_Outside-in analysis from public sources only; inferred items are hypotheses._\n";
+    $("md").textContent = md;
+  }
+
+  $("copy").addEventListener("click", function () {
+    var txt = $("md").textContent;
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { $("copy-msg").textContent = "Copied."; }, function () { $("copy-msg").textContent = "Copy blocked — use the preview below."; });
+    setTimeout(function () { $("copy-msg").textContent = ""; }, 2500);
+  });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
