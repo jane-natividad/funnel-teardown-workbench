@@ -1,37 +1,51 @@
 # Funnel Teardown Workbench
 
-A structured workbench for tearing down a live digital-health funnel from the outside, where every finding is tagged by stage, severity, and how you actually know it — observed, sourced, or inferred.
+Takes apart a digital health funnel, labelling every finding as observed, sourced or inferred.
 
-**[Live demo](https://funnel-teardown-workbench.vercel.app)** — works immediately, no API key or setup required. Everything runs in your browser; nothing you enter is stored or sent anywhere. Please use fictional/sample data only.
+**[Try the live demo](https://funnel-teardown-workbench.vercel.app)**. It works straight away with no setup, runs entirely in your browser, and stores nothing. All data is fictional or synthetic.
+
+## Why I built it
+
+I took apart several live telehealth funnels by hand, page by page and review by review. The hardest discipline was keeping track of what I'd actually seen versus what I was guessing, so I built that discipline into a reusable tool.
+
+## The problem
+
+Most funnel reviews blur what you saw yourself, what a customer review says and what you're guessing, so the list of top issues mixes facts with hunches.
+
+## What I built
+
+Two fictional funnels, one direct to consumer and one where clinicians control access, with a clear scope box, a stage by stage severity view, a way to log new findings and a prioritized summary that keeps guesses in a separate 'validate first' list. It exports to Markdown.
 
 ## Who it's for
 
-Product managers, growth leads, and analysts evaluating a digital-health product — their own or a competitor's — from public information.
-
-## Why it matters
-
-Most funnel teardowns blur what you saw yourself, what a customer review says, and what you're guessing — so the 'top issues' list mixes facts with hunches. This tool forces every finding to say how you know it, so the final priority list separates confirmed problems from hypotheses to validate.
+Product managers, growth leads and analysts reviewing a digital health product from public information.
 
 ## What it does
 
-- Switch between a DTC subscription funnel and a clinician-gated (B2B2C) funnel
-- Filter findings by stage, hide inferred findings, and log your own
-- Get a prioritized summary ranked by severity × confidence, and copy the whole teardown as Markdown
+- Switch between a direct to consumer funnel and a clinician controlled one
+- Filter by stage, hide inferred findings and log your own
+- Get a prioritized summary and copy the full review as Markdown
 
-## Product decisions that mattered more than the model
+## Decisions that shaped it
 
-1. **Evidence type on every finding** — observed, sourced, or inferred
-2. **Scope is part of the output** — including what was deliberately not done
-3. **Find who actually converts** — in a clinician-gated product, it's the clinician
+1. **Every finding says how you know it:** observed, sourced or inferred.
+2. **Scope is part of the result:** including what was deliberately left out.
+3. **Find who really converts:** when clinicians control access, they are the real customer.
+
+## Key takeaway
+
+Confidence is part of every finding. Something you observed carries more weight than something you inferred.
 
 ## Built with
 
-- HTML, CSS, JavaScript (single-file prototype, no framework, no build step)
+- HTML, CSS and JavaScript in a single file
 
-## Run locally
+## Run it locally
 
-Open `index.html` in any browser — no install needed.
+Open `index.html` in any browser. There's nothing to install.
 
-## Status
+## About this project
 
-This is a prototype built to explore a problem space, using fictional/synthetic data — not a finished product and not connected to any organization's real systems. Built by [Jane Natividad](https://github.com/jane-natividad) — see more at [jane-natividad.github.io](https://jane-natividad.github.io).
+This is a working prototype I built to explore a real problem space. It uses illustrative, fictional data and isn't connected to any organisation's systems. You can find more of my work at [jane-natividad.github.io](https://jane-natividad.github.io).
+
+Built by [Jane Natividad](https://github.com/jane-natividad).
